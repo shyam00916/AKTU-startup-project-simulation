@@ -1,0 +1,85 @@
+{
+  "experiment_name": "receivables_os_ml_v1",
+  "model_version": "1.0.0",
+  "seed": 42,
+  "output_root": "artifacts",
+  "data": {
+    "n_customers": 600,
+    "horizon_days": 540,
+    "min_invoices_per_customer": 10,
+    "max_invoices_per_customer": 28,
+    "start_date": "2024-01-01",
+    "late_threshold_days": 7,
+    "train_quantile": 0.65,
+    "val_quantile": 0.8,
+    "min_history_len": 3,
+    "max_seq_len": 20
+  },
+  "sequence": {
+    "hidden_dim": 48,
+    "embedding_dim": 32,
+    "num_layers": 1,
+    "dropout": 0.15,
+    "batch_size": 128,
+    "epochs": 22,
+    "learning_rate": 0.0015,
+    "weight_decay": 0.0001,
+    "delay_loss_weight": 0.08,
+    "early_stopping_patience": 5
+  },
+  "tabular": {
+    "logreg_c": 0.8,
+    "ridge_alpha": 2.0,
+    "rf_n_estimators": 220,
+    "rf_max_depth": 10,
+    "rf_min_samples_leaf": 5,
+    "xgb_n_estimators": 240,
+    "xgb_max_depth": 5,
+    "xgb_learning_rate": 0.06,
+    "xgb_subsample": 0.85,
+    "xgb_colsample_bytree": 0.85
+  },
+  "clustering": {
+    "kmeans_k_min": 3,
+    "kmeans_k_max": 8,
+    "kmeans_target_k": 5,
+    "dbscan_eps_grid": [
+      1.6,
+      1.9,
+      2.2,
+      2.5,
+      2.8,
+      3.2
+    ],
+    "dbscan_min_samples": 12
+  },
+  "bandit": {
+    "n_episodes": 3500,
+    "linucb_alpha": 0.9,
+    "exploration_epsilon": 0.15,
+    "goodwill_penalty_weight": 1.0
+  },
+  "explainability": {
+    "high_risk_threshold": 0.55,
+    "max_high_risk_customers_export": 100,
+    "shap_background_samples": 100
+  },
+  "robustness": {
+    "delay_shift_days": [
+      5.0,
+      10.0,
+      20.0
+    ],
+    "missing_record_rates": [
+      0.2,
+      0.4,
+      0.6
+    ],
+    "behavior_drift_fraction": 0.35,
+    "industry_shift_high_risk_boost": 3.5,
+    "shock_delay_jump_days": 14.0,
+    "shock_amount_multiplier": 1.45,
+    "shock_partial_pay_boost": 0.3
+  },
+  "config_hash": "28f0c10c18a5"
+}

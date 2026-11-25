@@ -1,0 +1,63 @@
+Metadata-Version: 2.4
+Name: receivables-os-ml
+Version: 0.1.0
+Summary: Reproducible ML Research Engine for ReceivablesOS: Temporal Customer Embeddings, Behavioral Clustering, Contextual Bandit Collection Optimization, SHAP Explainability, Model Comparison, and Robustness Testing.
+Requires-Python: >=3.11
+Description-Content-Type: text/markdown
+Requires-Dist: numpy>=2.0
+Requires-Dist: pandas>=2.2
+Requires-Dist: scipy>=1.14
+Requires-Dist: scikit-learn>=1.6
+Requires-Dist: xgboost>=3.0
+Requires-Dist: shap>=0.50
+Requires-Dist: torch>=2.5
+Requires-Dist: pydantic>=2.8
+Requires-Dist: joblib>=1.4
+Requires-Dist: pyyaml>=6.0
+Requires-Dist: matplotlib>=3.9
+Requires-Dist: seaborn>=0.13
+Requires-Dist: plotly>=6.0
+Requires-Dist: streamlit>=1.40
+Provides-Extra: dev
+Requires-Dist: pytest>=8.0; extra == "dev"
+
+# ReceivablesOS ML Intelligence Engine
+
+Research-grade machine learning stack for B2B accounts receivable risk modeling, behavioral segmentation, collection policy optimization, SHAP explainability, and distribution-shift robustness evaluation.
+
+## Implemented Capabilities
+
+1. **Temporal Customer Embeddings (`src/receivables_ml/models/sequence.py`, `src/receivables_ml/data/features.py`)**
+   - Strictly causal point-in-time historical sequences (no future outcome leakage) encoding transaction frequency, payment delay sequence, invoice amount sequence, partial payment patterns, and outstanding balance trajectory.
+   - Multi-task PyTorch `TemporalGRUAttentionNet` producing 32-dim temporal customer embeddings and step-level attention weights, benchmarked directly against XGBoost and via hybrid embedding ablation.
+
+2. **Customer Payment Behavior Clustering (`src/receivables_ml/models/clustering.py`)**
+   - Unsupervised K-Means ($k \in [3, 8]$ sweep) and DBSCAN density/outlier clustering across 14 customer trajectory descriptors.
+   - Discovers and profiles behavioral personas (`Consistent Early Payers`, `Consistent Late Payers`, `Irregular Payers`, `High-Value Delayed Payers`, `Deteriorating Customers`) and quantifies downstream segmentation lift on holdout prediction.
+
+3. **Collection Action Optimization (`src/receivables_ml/bandit/contextual_bandit.py`)**
+   - Contextual bandit simulation across `whatsapp_reminder`, `email_reminder`, `phone_call`, and `escalation` with Direct-Method, LinUCB, and Doubly Robust policies evaluated via IPS, SNIPS, and Doubly Robust off-policy estimators.
+   - Explicitly separates simulated off-policy evaluation from real-world causal effectiveness (requires randomized field A/B tests prior to autonomous rollout).
+
+4. **Model Explainability (`src/receivables_ml/explainability/shap_explainer.py`)**
+   - `shap.TreeExplainer` (XGBoost, Random Forest), `shap.LinearExplainer` (Logistic Regression), and sequence temporal attention/saliency.
+   - Generates per-customer diagnostics for every high-risk customer: top risk drivers, historical payment trends, outstanding balance SHAP contribution, and previous payment delay SHAP contribution.
+
+5. **Model Comparison & Dashboard (`src/receivables_ml/evaluation/comparison.py`, `dashboard/app.py`)**
+   - Compares Logistic Regression, Random Forest, XGBoost, and Sequence Model on ROC-AUC, PR-AUC, Precision, Recall, F1, Calibration (ECE & Brier), MAE, and RMSE.
+
+6. **Robustness Testing (`src/receivables_ml/evaluation/robustness.py`)**
+   - Stress-tests all trained models without retraining under increased payment delays (+5/+10/+20d), industry distribution shifts, customer behavior drift, missing transaction records (20%/40%/60%), and sudden economic shocks, outputting a structured model weakness report.
+
+## Quick Start
+
+```powershell
+# Run full reproducible experiment pipeline
+.venv\Scripts\python.exe scripts/run_experiments.py
+
+# Run test suite
+.venv\Scripts\python.exe -m pytest -v
+
+# Launch Model Comparison Dashboard
+.venv\Scripts\python.exe -m streamlit run dashboard/app.py
+```
